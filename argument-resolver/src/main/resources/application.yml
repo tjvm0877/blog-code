@@ -1,0 +1,3 @@
+jwt:
+  secret: "YXJndW1lbnRSZXNvbGJlci1qd3Qtc2VjcmV0LWtleQo="
+  expiration: 360000000
