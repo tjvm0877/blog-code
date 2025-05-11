@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true # Hibernate 초기화 후 data.sql 등 스크립트 실행 허용(Spring Boot 2.5+)
+  datasource:
+    url: jdbc:mysql://my-db:3306/book
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always # 항상 SQL 초기화 스크립트(data.sql 등) 실행
+      data-locations: classpath:data.sql # data.sql 파일 위치 지정
+logging:
+  level:
+    org.hibernate.SQL: debug

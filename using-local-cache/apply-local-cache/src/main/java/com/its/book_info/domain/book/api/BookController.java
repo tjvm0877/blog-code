@@ -18,6 +18,8 @@ import com.its.book_info.domain.book.dto.BookCreateRequest;
 import com.its.book_info.domain.book.dto.BookDetailResponse;
 import com.its.book_info.domain.book.dto.BookListResponse;
 import com.its.book_info.domain.book.dto.BookResponse;
+import com.its.book_info.global.aop.annotation.CacheLogging;
+import com.its.book_info.global.aop.annotation.LogExecutionTime;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +33,7 @@ public class BookController {
 
 	// 전체 도서 목록 조회
 	@GetMapping
+	@LogExecutionTime
 	public ResponseEntity<?> getBookList(
 		@PageableDefault(size = 10, page = 0, direction = Sort.Direction.DESC) Pageable pageable) {
 		BookListResponse response = bookSearchService.getList(pageable);
@@ -39,6 +42,7 @@ public class BookController {
 
 	// 저자별 도서 목록 조회
 	@GetMapping("/author/{author}")
+	@LogExecutionTime
 	public ResponseEntity<?> getBookListByAuthor(
 		@PathVariable("author") String author,
 		@PageableDefault(size = 10, page = 0, direction = Sort.Direction.DESC) Pageable pageable
@@ -49,6 +53,7 @@ public class BookController {
 
 	// ID로 도서 상세 정보 조회
 	@GetMapping("/{id}")
+	@LogExecutionTime
 	public ResponseEntity<?> getBookInfo(@PathVariable("id") Long id) {
 		BookDetailResponse response = bookSearchService.getDetail(id);
 		return ResponseEntity.ok(response);
@@ -56,6 +61,7 @@ public class BookController {
 
 	// IBSN으로 도서 상세 정보 조회
 	@GetMapping("/isbn/{isbn}")
+	@LogExecutionTime
 	public ResponseEntity<?> getBookByIsbn(@PathVariable("isbn") String isbn) {
 		BookDetailResponse response = bookSearchService.getDetailByIsbn(isbn);
 		return ResponseEntity.ok(response);
@@ -63,6 +69,7 @@ public class BookController {
 
 	// 도서 등록
 	@PostMapping
+	@CacheLogging
 	public ResponseEntity<?> registerBook(@RequestBody BookCreateRequest request) {
 		BookResponse response = bookManageService.register(request);
 		return ResponseEntity.ok(response);
@@ -70,6 +77,7 @@ public class BookController {
 
 	// 도서 삭제
 	@DeleteMapping("/{id}")
+	@CacheLogging
 	public ResponseEntity<?> deleteBook(@PathVariable("id") Long id) {
 		bookManageService.delete(id);
 		return ResponseEntity.ok().build();

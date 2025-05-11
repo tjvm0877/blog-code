@@ -1,0 +1,17 @@
+# 빌드 결과물
+/build
+
+## IDE 설정 파일
+.idea/
+
+# 운영체제별 임시 파일
+.DS_Store
+
+# Git 등 버전관리 시스템
+.git/
+.gitignore
+.gitattributes
+
+# 테스트 및 문서
+/test
+*.md
