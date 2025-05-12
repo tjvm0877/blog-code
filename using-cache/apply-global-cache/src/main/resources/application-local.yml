@@ -1,0 +1,30 @@
+spring:
+  jpa:
+    database: h2
+    properties.hibernate.dialect: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true # Hibernate 초기화 후 data.sql 등 스크립트 실행 허용(Spring Boot 2.5+)
+  datasource:
+    url: jdbc:h2:mem:testdb;
+    username: root
+    password: 1234
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: always # 항상 SQL 초기화 스크립트(data.sql 등) 실행
+      data-locations: classpath:data.sql # data.sql 파일 위치 지정
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  redis:
+    host: localhost
+    port: 6379
+    password: 1234
+logging:
+  level:
+    org.hibernate.SQL: debug
