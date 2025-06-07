@@ -8,10 +8,44 @@ import {
 } from '@mui/material';
 import Card from '../components/Card';
 import Container from '../components/Container';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { signUp } from '../api/member';
+import { useAuthStore } from '../store/useAuthStore';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
+  const setToken = useAuthStore((state) => state.setAccessToken);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const nickname = formData.get('nickname')?.toString().trim();
+
+    if (!nickname) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+    if (!token) {
+      alert('유효하지 않은 접근입니다.');
+      return;
+    }
+
+    try {
+      const response = await signUp(token, nickname);
+      if (response?.accessToken) {
+        setToken(response.accessToken);
+        navigate('/info'); // 회원가입 성공 후 이동
+      } else {
+        alert('회원가입에 실패했습니다.');
+      }
+    } catch (error) {
+      alert('회원가입 중 오류가 발생했습니다.');
+      console.log(error);
+    }
+  };
 
   return (
     <Container direction={'column'} justifyContent={'space-between'}>
@@ -24,7 +58,8 @@ const SignUp = () => {
           Sign up
         </Typography>
         <Box
-          component={'form'}
+          component="form"
+          onSubmit={handleSubmit}
           noValidate
           sx={{
             display: 'flex',
@@ -34,61 +69,23 @@ const SignUp = () => {
           }}
         >
           <FormControl>
-            <FormLabel htmlFor="email">Email</FormLabel>
+            <FormLabel htmlFor="nickname">Nickname</FormLabel>
             <TextField
-              // error={emailError}
-              // helperText={emailErrorMessage}
-              id="email"
-              type="email"
-              name="email"
-              placeholder="your@email.com"
-              autoComplete="email"
+              id="nickname"
+              type="text"
+              name="nickname"
+              placeholder="Your nickname"
+              autoComplete="nickname"
               autoFocus
               required
               fullWidth
               variant="outlined"
-              // color={emailError ? 'error' : 'primary'}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="password">Password</FormLabel>
-            <TextField
-              // error={passwordError}
-              // helperText={passwordErrorMessage}
-              name="password"
-              placeholder="••••••"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              autoFocus
-              required
-              fullWidth
-              variant="outlined"
-              // color={passwordError ? 'error' : 'primary'}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="password-check">Password Check</FormLabel>
-            <TextField
-              // error={passwordError}
-              // helperText={passwordErrorMessage}
-              name="password-check"
-              placeholder="••••••"
-              type="password"
-              id="password-check"
-              autoComplete="current-password"
-              autoFocus
-              required
-              fullWidth
-              variant="outlined"
-              // color={passwordError ? 'error' : 'primary'}
             />
           </FormControl>
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            // onClick={validateInputs}
             style={{ textTransform: 'none' }}
           >
             Sign up
