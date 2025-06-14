@@ -1,38 +1,42 @@
 import { Box, Button, CircularProgress } from '@mui/material';
 import Container from '../components/Container';
 import Card from '../components/Card';
-import {
-  GithubIcon,
-  GoogleIcon,
-  KakaoIcon,
-  NaverIcon,
-} from '../components/CustomIcon';
+import { GoogleIcon, KakaoIcon } from '../components/CustomIcon';
 import { useState } from 'react';
 
+type OAuthProvider = 'google' | 'kakao';
+
+const API_BASE_URL = 'http://localhost:8080';
+
 const SignIn = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleGoogleLogin = async () => {
+  const handleOAuthLogin = async (provider: OAuthProvider): Promise<void> => {
     try {
       setLoading(true);
-      window.location.href =
-        'http://localhost:8080/oauth2/authorization/google';
-    } catch (e) {
-      console.log(e);
+
+      // OAuth 제공자별 인증 엔드포인트 구성
+      // - /oauth2/authorization/{provider}: Spring Security의 기본 OAuth2 인증 경로
+      const authUrl = `${API_BASE_URL}/oauth2/authorization/${provider}`;
+
+      // 브라우저 리다이렉트를 통한 OAuth 인증 시작
+      // - 사용자를 선택한 제공자의 로그인 페이지로 이동시킴
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error(`${provider} 로그인 실패:`, error);
+      setLoading(false);
     }
   };
 
-  const handlerKakaoLogin = async () => {
-    try {
-      setLoading(true);
-      window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const handleGoogleLogin = (): Promise<void> => handleOAuthLogin('google');
+  const handleKakaoLogin = (): Promise<void> => handleOAuthLogin('kakao');
 
   if (loading) {
-    return <CircularProgress />;
+    return (
+      <Container direction={'column'} justifyContent={'center'}>
+        <CircularProgress />
+      </Container>
+    );
   }
 
   return (
@@ -51,9 +55,8 @@ const SignIn = () => {
           <Button
             fullWidth
             variant="outlined"
-            onClick={handlerKakaoLogin}
+            onClick={handleKakaoLogin}
             startIcon={<KakaoIcon />}
-            style={{ textTransform: 'none' }}
             sx={{
               textTransform: 'none',
               backgroundColor: '#FEE500',
@@ -66,42 +69,6 @@ const SignIn = () => {
             }}
           >
             Sign in with Kakao
-          </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => alert('Sign in with Naver')}
-            startIcon={<NaverIcon />}
-            sx={{
-              textTransform: 'none',
-              backgroundColor: '#03C75A',
-              color: '#fff',
-              border: 'none',
-              '&:hover': {
-                backgroundColor: '#03C75A',
-                opacity: 0.8,
-              },
-            }}
-          >
-            Sign in with Naver
-          </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => alert('Sign with Naver')}
-            startIcon={<GithubIcon />}
-            sx={{
-              textTransform: 'none',
-              backgroundColor: '#000',
-              color: '#fff',
-              border: 'none',
-              '&:hover': {
-                backgroundColor: '#000',
-                opacity: 0.8,
-              },
-            }}
-          >
-            Sign in with Github
           </Button>
         </Box>
       </Card>
