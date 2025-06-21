@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    include: secrets
+  application:
+    name: refresh-token
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: jdbc:h2:mem:test
+    user: sa
+    password:
+    driver-class-name: org.h2.Driver
+  redis:
+    host: localhost
+    port: 6379
+    password: ${REDIS_PASSWORD}
+logging:
+  level:
+    org.hibernate.SQL: debug
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+
+  access-token-expiration: 900000     # 15분
+  refresh-token-expiration: 604800000 # 7일

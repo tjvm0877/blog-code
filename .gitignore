@@ -2,3 +2,5 @@
 .DS_Store
 
 start-oauth/.idea/
+
+refresh-token/src/main/resources/application-secrets.yml
